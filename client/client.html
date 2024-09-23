@@ -5,7 +5,82 @@
   <link rel="stylesheet" type="text/css" href="/style.css">
   
   <script>
+    
+    const handleResponse = async (response) =>{
+      const content = document.querySelector('#content');
 
+      // Write based on response code
+      switch(response.status) {
+        case 200: 
+          content.innerHTML = `<b>Success</b>`;
+          break;
+        case 400: 
+          content.innerHTML = `<b>Bad Request</b>`;
+          break;
+        case 401:
+          content.innerHTML= `<b>Unauthorized</b>`;
+          break;
+        case 403:
+          content.innerHTML= `<b>Forbidden</b>`;
+          break;
+        case 404:
+          content.innerHTML = `<b>Resource Not Found</b>`;
+          break;
+        case 500:
+          content.innerHTML= `<b>Internal Server Error</b>`;
+          break;
+        case 501:
+          content.innerHTML= `<b>Not Implemented</b>`;
+          break;
+        default: 
+          content.innerHTML = `<b>Error code not implemented by client.</b>`;
+          break;
+      }
+      // only making get requests here
+      let obj = null;
+      if(response.headers.get("content-type") === 'application/json'){
+        let obj = await response.json();
+        content.innerHTML += `<p>Message: ${obj.message}</p>`;
+      }
+      else if(response.headers.get("content-type") === 'text/xml'){
+        let responseTxt = await response.text();
+        const parsedResponse = new window.DOMParser().parseFromString(responseTxt, 'text/xml');
+        content.innerHTML += `<p>Message: ${parsedResponse.querySelector('message').textContent}</p>`;
+      } 
+    }
+    
+    const callAPI = async () => {
+      // Grab URL and accept header
+      const url = document.querySelector('#page').value;
+      const responseType = document.querySelector('#type').value;
+
+      let options = {
+        method: 'GET',
+        headers: {
+          'Accept': responseType,
+        }
+      }
+
+      //fetch from server
+      let response = await fetch(url, options);
+      handleResponse(response);
+    }
+
+    const init = () => {
+      const button = document.querySelector('#send');
+      
+      //function to handle our request. In this case, it also cancels the built in html form action
+      const sendRequest = (e) => {
+        e.preventDefault();
+        callAPI();
+        return false;
+      }
+      
+      //add event listener
+      button.addEventListener('click', sendRequest);
+    };
+
+    window.onload = init;
   </script>
 </head>
 <body>

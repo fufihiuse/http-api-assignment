@@ -2,14 +2,21 @@ const http = require('http');
 const query = require('querystring');
 
 const htmlHandler = require('./htmlResponses.js');
-const jsonHandler = require('./jsonResponses.js');
+const responseHandler = require('./responses.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 const urlStruct = {
   '/style.css': htmlHandler.getCSS,
   '/': htmlHandler.getIndex,
+  '/success': responseHandler.getSuccess,
+  '/badRequest': responseHandler.getBadRequest,
+  '/unauthorized': responseHandler.getUnauthorized,
+  '/forbidden': responseHandler.getForbidden,
+  '/internal': responseHandler.getInternal,
+  '/notImplemented': responseHandler.getNotImplemented,
   index: htmlHandler.getIndex,
+  notFound: responseHandler.notFound,
 };
 
 const parseBody = (request, response, handler) => {
@@ -43,7 +50,7 @@ const onRequest = (request, response) => {
   if (handler) {
     parseBody(request, response, handler);
   } else {
-    jsonHandler.notFound(request, response); // 404
+    urlStruct.notFound(request, response); // 404
   }
 };
 
