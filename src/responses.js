@@ -13,15 +13,17 @@ const respond = (request, response, content, type, status) => {
   response.end();
 };
 
-/* XML
+// XML
 const createXMLResponse = (responseObj) => {
   let responseXML = '<response>';
   responseXML = `${responseXML} <message>${responseObj.message}</message>`;
-  responseXML = `${responseXML} <id>${responseObj.id}</id>`;
+  if ('id' in responseObj) {
+    responseXML = `${responseXML} <id>${responseObj.id}</id>`;
+  }
   responseXML = `${responseXML} </response>`;
   return responseXML;
 };
-*/
+//
 
 // Page not found, respond with 404
 const notFound = (request, response) => {
@@ -31,7 +33,7 @@ const notFound = (request, response) => {
   };
   const status = 404;
 
-  /* XML
+  // XML
   if (request.acceptedTypes[0] === 'text/xml') {
     // create a valid XML string with name and age tags.
     const responseXML = createXMLResponse(responseObj);
@@ -39,7 +41,6 @@ const notFound = (request, response) => {
     // return response passing out string and content type
     return respond(request, response, responseXML, 'text/xml', status);
   }
-  */
 
   // JSON
   const responseString = JSON.stringify(responseObj);
@@ -52,7 +53,7 @@ const getSuccess = (request, response) => {
   };
   const status = 200;
 
-  /* XML
+  // XML
   if (request.acceptedTypes[0] === 'text/xml') {
     // create a valid XML string with name and age tags.
     const responseXML = createXMLResponse(responseObj);
@@ -60,7 +61,6 @@ const getSuccess = (request, response) => {
     // return response passing out string and content type
     return respond(request, response, responseXML, 'text/xml', status);
   }
-  */
 
   // JSON
   const responseString = JSON.stringify(responseObj);
@@ -79,6 +79,15 @@ const getBadRequest = (request, response) => {
 
   if (status === 200) { responseObj.message = 'This request has the required parameters'; delete responseObj.id; }
 
+  // XML
+  if (request.acceptedTypes[0] === 'text/xml') {
+    // create a valid XML string with name and age tags.
+    const responseXML = createXMLResponse(responseObj);
+
+    // return response passing out string and content type
+    return respond(request, response, responseXML, 'text/xml', status);
+  }
+
   // JSON
   const responseString = JSON.stringify(responseObj);
   return respond(request, response, responseString, 'application/json', status);
@@ -96,6 +105,15 @@ const getUnauthorized = (request, response) => {
 
   if (status === 200) { responseObj.message = 'You have successfully viewed the content.'; delete responseObj.id; }
 
+  // XML
+  if (request.acceptedTypes[0] === 'text/xml') {
+    // create a valid XML string with name and age tags.
+    const responseXML = createXMLResponse(responseObj);
+
+    // return response passing out string and content type
+    return respond(request, response, responseXML, 'text/xml', status);
+  }
+
   // JSON
   const responseString = JSON.stringify(responseObj);
   return respond(request, response, responseString, 'application/json', status);
@@ -107,6 +125,15 @@ const getForbidden = (request, response) => {
     id: 'forbidden',
   };
   const status = 403;
+
+  // XML
+  if (request.acceptedTypes[0] === 'text/xml') {
+    // create a valid XML string with name and age tags.
+    const responseXML = createXMLResponse(responseObj);
+
+    // return response passing out string and content type
+    return respond(request, response, responseXML, 'text/xml', status);
+  }
 
   // JSON
   const responseString = JSON.stringify(responseObj);
@@ -120,6 +147,15 @@ const getInternal = (request, response) => {
   };
   const status = 500;
 
+  // XML
+  if (request.acceptedTypes[0] === 'text/xml') {
+    // create a valid XML string with name and age tags.
+    const responseXML = createXMLResponse(responseObj);
+
+    // return response passing out string and content type
+    return respond(request, response, responseXML, 'text/xml', status);
+  }
+
   // JSON
   const responseString = JSON.stringify(responseObj);
   return respond(request, response, responseString, 'application/json', status);
@@ -131,6 +167,15 @@ const getNotImplemented = (request, response) => {
     id: 'notImplemented',
   };
   const status = 501;
+
+  // XML
+  if (request.acceptedTypes[0] === 'text/xml') {
+    // create a valid XML string with name and age tags.
+    const responseXML = createXMLResponse(responseObj);
+
+    // return response passing out string and content type
+    return respond(request, response, responseXML, 'text/xml', status);
+  }
 
   // JSON
   const responseString = JSON.stringify(responseObj);
@@ -145,5 +190,4 @@ module.exports = {
   getForbidden,
   getInternal,
   getNotImplemented,
-
 };
